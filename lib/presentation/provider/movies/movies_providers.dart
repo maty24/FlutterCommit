@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seedapp/domain/entities/movie.dart';
 import 'package:seedapp/presentation/provider/movies/movie_repository_provider.dart';
 
-final nowPlayingMoviesProvider = StateNotifierProvider((ref) {
+final nowPlayingMoviesProvider = StateNotifierProvider<MoviesNotifier,List<Movie>>((ref) {
   //uso el watch para obtener el provedor de la referencia
   final fetchMoreMovies = ref.watch(movieRepositoryProvider).getNowPlaying;
   //retornamos la clase que es el estado que va a notificar y le pasamos los argumentos que necesita
@@ -22,13 +22,13 @@ class MoviesNotifier extends StateNotifier<List<Movie>> {
   //el super le pasamos el estado inicial que es una lista vacia
   MoviesNotifier({
     required this.fetchMoreMovies,
-  }) : super([]);
+  }): super([]);
 
-  Future<void> loadNextPage() async {
-    //aumentamos la pagina
+  Future<void> loadNextPage() async{
     currentPage++;
-    final List<Movie> movies = await fetchMoreMovies(page: currentPage);
-    //agregamos las peliculas a la lista
+    final List<Movie> movies = await fetchMoreMovies( page: currentPage );
     state = [...state, ...movies];
   }
+
+
 }
