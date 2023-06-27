@@ -1,8 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:seedapp/config/helpers/human_formats.dart';
 import 'package:seedapp/domain/entities/movie.dart';
-
 
 //este widget es el que se va a mostrar en la pantalla principal el titulo , subtitulo y la lista de peliculas
 class MovieHorizontalListview extends StatefulWidget {
@@ -20,38 +20,38 @@ class MovieHorizontalListview extends StatefulWidget {
   });
 
   @override
-  State<MovieHorizontalListview> createState() => _MovieHorizontalListviewState();
+  State<MovieHorizontalListview> createState() =>
+      _MovieHorizontalListviewState();
 }
 
 class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
-   //el scrollController es el encargado de detectar cuando se llega al final de la lista para cargar mas peliculas
+  //el scrollController es el encargado de detectar cuando se llega al final de la lista para cargar mas peliculas
   final scrollController = ScrollController();
 
- //se inicializa el scrollController y se le agrega un listener para detectar cuando se llega al final de la lista
+  //se inicializa el scrollController y se le agrega un listener para detectar cuando se llega al final de la lista
   @override
   void initState() {
     super.initState();
-    
+
     //el addlistener se encarga de detectar cuando se llega al final de la lista
     scrollController.addListener(() {
       //si el widget.loadNextPage es nulo no se hace nada
-      if ( widget.loadNextPage == null ) return;
+      if (widget.loadNextPage == null) return;
 
-      if ( (scrollController.position.pixels + 200) >= scrollController.position.maxScrollExtent ) {
+      if ((scrollController.position.pixels + 200) >=
+          scrollController.position.maxScrollExtent) {
         widget.loadNextPage!();
       }
-
     });
-
   }
- //si creo un listener se debe destruir cuando se destruye el widget debo hacer un dispose
+
+  //si creo un listener se debe destruir cuando se destruye el widget debo hacer un dispose
   //el dispose se encarga de eliminar el scrollController cuando se destruye el widget
   @override
   void dispose() {
     scrollController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,19 +62,16 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
         if (widget.title != null || widget.subTitle != null)
           _Title(title: widget.title, subTitle: widget.subTitle),
 
-
-
-                    Expanded(
+        Expanded(
             child: ListView.builder(
-              controller: scrollController,
-              itemCount: widget.movies.length,
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return FadeInRight(child: _Slide(movie: widget.movies[index]));
-              },
-            )
-          )
+          controller: scrollController,
+          itemCount: widget.movies.length,
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            return FadeInRight(child: _Slide(movie: widget.movies[index]));
+          },
+        ))
       ]),
     );
   }
@@ -105,8 +102,7 @@ class _Slide extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: 150,
                 loadingBuilder: (context, child, loadingProgress) {
-
-                   //si esta cargando se muestra un circulo de progreso
+                  //si esta cargando se muestra un circulo de progreso
                   if (loadingProgress != null) {
                     return const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -114,9 +110,15 @@ class _Slide extends StatelessWidget {
                           child: CircularProgressIndicator(strokeWidth: 2)),
                     );
                   }
-                   
-                   //si la imagen ya cargo se muestra
-                  return FadeIn(child: child);
+                  //si la imagen ya cargo se muestra la imagen\
+                  //el gestureDetector es el encargado de detectar cuando se hace click en la imagen
+                  return GestureDetector(
+                    child: FadeIn(child: child),
+                    onTap: () => context.push('/movie/${movie.id}'),
+                  );
+
+                  
+              
                 },
               ),
             ),

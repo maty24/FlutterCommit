@@ -4,6 +4,7 @@ import 'package:seedapp/config/constants/enviroments.dart';
 import 'package:seedapp/domain/datasources/movies_datasource.dart';
 import 'package:seedapp/domain/entities/movie.dart';
 import 'package:seedapp/infrastructure/mappers/movie_mapper.dart';
+import 'package:seedapp/infrastructure/models/moviedb/movie_details.dart';
 import 'package:seedapp/infrastructure/models/moviedb/moviedb_response.dart';
 
 class MoviedbDatasource extends MoviesDatasource {
@@ -57,5 +58,18 @@ class MoviedbDatasource extends MoviesDatasource {
         await dio.get('/movie/upcoming', queryParameters: {'page': page});
 
     return _jsonToMovies(response.data);
+  }
+
+  //esta funcion es para obtener los detalles de una pelicula
+
+  @override
+  Future<Movie> getMovieById(String id) async {
+    final response = await dio.get('/movie/$id');
+    if (response.statusCode != 200)
+      throw Exception('Movie with id: $id not found');
+
+    final movieDetails = MovieDetails.fromJson(response.data);
+    final Movie movie = MovieMapper.movieDetailsToEntity(movieDetails);
+    return movie;
   }
 }
