@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../delegates/search_movie_delegate.dart';
+
 //este widget es la parte de arriba de la pantalla
 class CustomAppbar extends StatelessWidget {
   const CustomAppbar({super.key});
@@ -19,7 +21,16 @@ class CustomAppbar extends StatelessWidget {
             const SizedBox(width: 5),
             Text('Cinemapedia', style: titleStyle),
             const Spacer(),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+            IconButton(
+                onPressed: () {
+                 //el showSearch es un metodo que viene en el material.dart y sirve para buscar
+                  showSearch(
+                    context: context, 
+                    //el delegate el que se encarga de la busqueda
+                    delegate: SearchMovieDelegate()
+                  );
+                },
+                icon: const Icon(Icons.search))
           ]),
         ),
       ),
